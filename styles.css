@@ -1,5 +1,5 @@
 body {
-  background-color: rosybrown;
+  background-color: #f5e9dc;
   font-family: Arial, sans-serif;
 }
 
@@ -14,7 +14,7 @@ a {
 
 .business-card {
   width: 300px;
-  background-color: brown;
+  background-color: #f5e9dc;
   padding: 20px;
   margin-top: 100px;
   text-align: center;
@@ -25,4 +25,10 @@ a {
 
 .profile-image {
   max-width: 100%;
+}
+
+img {
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
 }
