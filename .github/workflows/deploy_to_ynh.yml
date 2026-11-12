@@ -50,7 +50,7 @@ jobs:
 
     # Authentification : clé SSH si le secret SFTP_KEY existe, sinon mot de passe.
     # Le mot de passe passe par la variable LFTP_PASSWORD, jamais sur la ligne de commande.
-    # Seuls les fichiers du site sont envoyés : .git, .github et .gitignore sont exclus.
+    # Seuls les fichiers du site sont envoyés (voir EXCLUDES).
     - name: Push files via SFTP
       env:
         SFTP_HOST: ${{ secrets.SFTP_HOST }}
@@ -68,7 +68,11 @@ jobs:
           export LFTP_PASSWORD="$SFTP_PASSWORD"
           AUTH="set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=yes'; open --env-password -u $SFTP_USER -p $SFTP_PORT sftp://$SFTP_HOST"
         fi
-        lftp -c "set cmd:fail-exit yes; $AUTH; mirror -R --verbose -x '^\.git/' -x '^\.github/' -x '^\.gitignore$' ./ /www/"
+        # Fichiers de développement jamais envoyés (liste commune à tous les dépôts doqa-io).
+        EXCLUDES="-x '^\.git/' -x '^\.github/' -x '^\.gitignore$' -x '^\.idea/' -x '^\.ddev/' \
+          -x '^node_modules/' -x '^tests/' -x '^test-results/' -x '^playwright-report/' \
+          -x '^package(-lock)?\.json$' -x '^playwright\.config\.' -x '^README\.md$'"
+        lftp -c "set cmd:fail-exit yes; $AUTH; mirror -R --verbose $EXCLUDES ./ /www/"
 
     - name: Remove deploy key
       if: always()
